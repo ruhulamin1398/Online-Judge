@@ -1,0 +1,22 @@
+body{
+	background-color: #F7F9FC;
+}
+
+td{
+	
+}
+
+th{
+	background-color: #F4F6F8;
+}
+
+
+
+table#datatable.dataTable tbody tr:hover {
+  background-color: #F4F6F8;
+  cursor: pointer;
+}
+ 
+table#datatable.dataTable tbody tr:hover > .sorting_1 {
+  background-color: #F4F6F8;
+}

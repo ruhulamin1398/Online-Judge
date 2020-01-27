@@ -1,0 +1,39 @@
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+	background-color: #F5F3F3;
+    border: 1px solid #ccc;
+	border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: var(--header-bg-color);
+    color: white;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+	border-radius: 05px;
+    font-size: 15px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+button:disabled {
+  opacity: 0.8;
+}
+button:focus  {
+  outline: none;
+}
+
+.register_notice{
+    color: #006266;
+    margin-left: 5px;
+    font-size:  13px;
+
+}

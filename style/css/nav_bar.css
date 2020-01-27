@@ -1,0 +1,55 @@
+.navbar_style{
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background-color: var(--header-bg-color);
+    color: #ffffff;
+    border-radius: 0px;
+}
+
+.li_nav{
+    border-radius: 10px;
+    color: #ffffff;
+}
+
+a.navbar_style{
+    font-size: 12.5px;
+   color: #ffffff;
+}
+
+a.navbar_style2{
+    font-size: 11.5px;
+    color: #ffffff;
+}
+
+.navbar_btn{
+    font-family: "Times New Roman", Times, serif;
+    font-size: 13px;
+}
+
+  .dropdown-toggle:active{
+    color: #FFE4C4;
+    background-color:#0c2461;
+   }
+.navbar-nav>li > a:focus{
+    background-color:#ffffff; !important;
+    border-radius: 10px;
+}
+
+.navbar-nav>li{
+    border-radius: 10px;
+    color: #ffffff;
+}
+
+.slider_height{
+    height: 200px;
+    max-height: 200px;
+}
+
+.nevbar_fontstyle{
+    font-size: 16px;
+
+}
+
+.nav_logo{
+    font-family: "Arial Black", Gadget, sans-serif;
+}

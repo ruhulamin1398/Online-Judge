@@ -1,0 +1,31 @@
+.box_header{
+	background-color: var(--bg-color);
+	color: var(--font-color);
+	padding: 10px;
+	font-weight: bold;
+	font-size: 18px;
+	border-radius: 3px 3px 0px 0px;
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+.box_body{
+	background-color: #ffffff;
+	min-height: 50px;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.box{
+	border-radius: 6px;
+	border-color: var(--bg-color);
+	border-width: 2px;
+	border-style: solid;
+	margin-bottom: 10px;
+}
+
+.sm_border{
+	border-width: 1px!important;
+}
+.none_border{
+	border-width: 0px!important;
+}

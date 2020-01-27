@@ -1,0 +1,33 @@
+.problem_bold_text{
+		font-size: 16px;
+		font-weight: bold;
+		margin-top: 20px;
+		margin-bottom: 4px;
+		color: #222222;
+		
+
+	}
+	.example_box{
+		margin-bottom: 0px;
+
+	}
+	.input_box,.output_box{
+		font-weight: bold;
+	}
+	.input_detail{
+		background-color: #EFEFEF;
+		color: #A1004A;
+		font-size: 12px;
+		border-width: 0px 1px 1px 1px;
+	}
+	.input_box{
+		border: 1px solid #888888;
+	}
+	.output_box{
+		border-width: 0px 1px 1px 1px;
+	}
+	.input_box,.output_box,.input_detail{
+		padding: 4px 4px 4px 6px;
+		border-style: solid;
+		border-color: #888888;
+	}
