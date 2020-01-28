@@ -23,5 +23,8 @@
 	include "script/problem/problem_format.php";
 	$problem_format=new problem_format();
 
+	include "script/test_case/test_case.php";
+	$test_case=new test_case();
+
 ?>
 

@@ -12,7 +12,7 @@ input[type=text], input[type=password] {
 
 button {
     background-color: var(--header-bg-color);
-    color: white;
+    color: #ffffff;
     padding: 12px;
     border: none;
     cursor: pointer;
@@ -22,10 +22,12 @@ button {
 
 button:hover {
     opacity: 0.8;
+    color: #ffffff;
 }
 
 button:disabled {
   opacity: 0.8;
+  color: #ffffff;
 }
 button:focus  {
   outline: none;

@@ -20,3 +20,17 @@ table#datatable.dataTable tbody tr:hover {
 table#datatable.dataTable tbody tr:hover > .sorting_1 {
   background-color: #F4F6F8;
 }
+
+.td1{
+	background-color: #F4F6F8;
+	font-weight: bold;
+	border: 1px solid #DDDDDD;
+	padding: 10px;
+	text-align: center;
+}
+.td2{
+	background-color: #ffffff;
+	text-align: center;
+	border: 1px solid #DDDDDD;
+	padding: 5px;
+}

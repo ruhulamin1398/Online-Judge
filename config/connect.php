@@ -9,11 +9,13 @@ class database
     public $result;
     public $conn;
     public $site_name="Alom Enterprice";
+    public $isLoggedIn;
 
     //conection start
     public function __construct()
     {
         $this->connection();
+        $this->set_logged_in_id();
         date_default_timezone_set('Asia/Dhaka');
     }
     
@@ -24,6 +26,10 @@ class database
             echo "Conection failed";
         } else
             return 1;
+    }
+
+    public function set_logged_in_id(){
+        $this->isLoggedIn=(isset($_SESSION['oj_login_handle_id']))?$_SESSION['oj_login_handle_id']:0;
     } 
 
     public function date(){
@@ -117,7 +123,7 @@ class database
     }
     
     
-    public function sql_action($table, $action, $info,$ret="")
+    public function sql_action($table, $action, $info,$json=false)
     {
         
         $flag        = 0;
@@ -144,15 +150,21 @@ class database
         
         $error                = array();
         $error['error']       = 0;
-        $error['error_msg'] = "Successfully $action Data";
+        $error['error_msg']   = "Successfully $action Data";
+        
+        if($action_name='insert' && $flag==1)
+            $error['insert_id']     =  $this->conn->insert_id;
         
         if ($flag == 0) {
             $error['error']       = 1;
             $error['error_msg'] = $this->error_type_find(mysqli_error($this->conn));
         }
-        $error=json_encode($error);
-        if($ret=="print")echo "$error";
-        return $error;
+        
+        return $json?json_encode($error):$error;
+    }
+
+    public function get_last_insert_id(){
+       return $this->conn->insert_id;
     }
 
     public function get_pk($table_name){

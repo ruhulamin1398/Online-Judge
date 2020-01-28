@@ -8,6 +8,9 @@ class site_hash {
      	//user password
      	$this->hash_prefix['user_password']="@UsEr#@#PaSs@";
      	$this->hash_postfix['user_password']="#O@J#";
+
+     	$this->hash_prefix['test_case']="##@@@@@Test@@@@@CaSE";
+     	$this->hash_postfix['test_case']="O#######J";
      	
  	}
  
@@ -21,6 +24,10 @@ class site_hash {
 
 	public function user_password_hash($pass){
 		return $this->generate_hash_val("user_password",$pass);
+	}
+
+	public function test_case_hash($test_case_id){
+		return $this->generate_hash_val("test_case",$test_case_id);
 	}
 
 

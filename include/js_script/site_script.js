@@ -23,3 +23,10 @@ function loader(div_id,size=130){
   	img="<center><img "+img_style+img_url+" /></center>";
   	$("#"+div_id).html(img);
 }
+
+function update_site_status(){
+  $.post('site_action.php',get_data("update_site_status"),function(response){
+    
+  });
+}
+

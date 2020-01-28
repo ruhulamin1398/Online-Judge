@@ -8,9 +8,9 @@ class site {
      $this->conn=$this->db->conn;
  }
 
- public function get_back_page_url(){
+  public function get_back_page_url(){
 
- 	$main_url=$_SERVER['REQUEST_URI'];
+ 	  $main_url=$_SERVER['REQUEST_URI'];
 
   	$url=explode('/', $main_url);
   	$len=count($url);
@@ -23,6 +23,13 @@ class site {
         return (isset($_GET['back']))?$_GET['back']:"index.php";
 
   	return  base64_encode($page_name==""?"index.php":$page_name);
+  }
+
+  public function create_file($url,$file_name,$txt){
+      $new_file_name=$url.$file_name;
+      $file = fopen($new_file_name, "w");
+      fwrite($file, $txt);
+      fclose($file);
   }
  
 

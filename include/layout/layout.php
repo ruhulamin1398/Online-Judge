@@ -20,5 +20,11 @@
          ?>
     </head>
 
+    <?php
+        if($isLoggedIn)
+            echo "<script>setInterval(function(){ update_site_status(); }, 3000);</script>";
+
+    ?>
+
 	<body class="theme-blue">
 	   <div class="container" style="height: 100%; margin-top: 90px;">  

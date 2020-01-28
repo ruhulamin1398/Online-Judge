@@ -2,7 +2,6 @@
 
 var constraints_editor,input_editor,output_ex_editor,description_editor,input_ex_editor,output_ex_editor;
 var note_editor;
-var problem_id;
 
 function set_up_editor(){
 	
