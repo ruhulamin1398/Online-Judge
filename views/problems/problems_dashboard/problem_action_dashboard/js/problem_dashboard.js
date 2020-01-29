@@ -1,7 +1,100 @@
 var dashboard_action_url="problem_dashboard_action.php";
-var problem_id=1;
 
-//test case function--------------------------
+// page ready event ------------------------------------------
+
+$( document ).ready(function() {
+    display_page();
+});
+
+
+//site info---------------------------------
+
+function display_page(){
+	if(page_action_name!="edit")
+		change_option(page_action_name);
+}
+
+function change_url(action_name,page_name=""){
+	url="problems_dashboard.php?problem_id="+problem_id+"&action="+action_name;
+	var obj = { Title: page_name, Url: url };
+    history.pushState(obj, obj.Title, obj.Url);
+}
+
+function set_header_name(header_name){
+	$("#box_dashboard_header").html(header_name);
+}
+
+function change_option(option_name){
+	if(option_name=="test_case"){
+		change_url("test_case");
+		set_header_name("Test Case");
+		load_test_case_page();
+	}
+	else if(option_name=='edit'){
+		change_url("edit");
+		location.reload();
+	}
+	else if(option_name=='moderators'){
+		change_url("moderators");
+		set_header_name("Moderators");
+		load_moderators_page();
+	}
+	else{
+		change_url("overview");
+		set_header_name("Problem Overview");
+		load_overview_page();
+	}
+
+}
+
+//=======================================================
+
+//start overview page 
+
+function load_overview_page(){
+	loader("option_box_body");
+	$.get(dashboard_action_url,get_data("load_overview_page"),function(response){
+		$("#option_box_body").html(response);
+	});
+}
+
+//===========================================================
+
+//start overview page
+
+
+function load_moderators_page(){
+	loader("option_box_body");
+	$.get(dashboard_action_url,get_data("load_moderators_page",problem_id),function(response){
+		$("#option_box_body").html(response);
+	});
+}
+
+function search_moderators(){
+	var obj=[
+		{ "handle":"AmirHamza", "id":24},
+		{ "handle":"Alise", "id":24},
+		{ "handle":"Bob", "id":24},
+		{ "handle":"Zarry", "id":24}
+	];
+	$('#suggestion_box').html("");
+	var search_val=$("#search_moderators").val();
+	$.each(obj, function() {
+		if (this.handle.toLowerCase().includes(search_val.toLowerCase())==true && search_val.length>=1){
+			$('#suggestion_box').append(
+        		"<li class='list-group-item moderators_suggestion_li'>"+
+        		"<img class='img-thumbnail moderators_suggestion_li_img' src='https://hrcdn.net/s3_pub/hr-avatars/2655d5c2-7594-47b7-969a-c2f16daccc87/150x150.png'> "
+        		+this.handle+
+        		"</li>"
+    		);
+		}
+    	
+	});
+}
+
+//===========================================================
+
+//start test case function
 
 function load_test_case_page(){
 
@@ -69,4 +162,4 @@ function update_test_case(){
 	});
 }
 
-//end test case function----------------
+//===========================================================

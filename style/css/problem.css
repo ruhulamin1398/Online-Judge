@@ -31,3 +31,26 @@
 		border-style: solid;
 		border-color: #888888;
 	}
+
+.dashboard_input_text_area{
+		width: 100%;
+		outline: none;
+		height: 150px;
+		border-radius: 1px;
+		background-color: #F7F7F7;
+		padding: 5px;
+		resize: vertical;	
+}
+
+.dashboard_sidebar_li{
+	padding: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	cursor: pointer;
+	font-family: "Times New Roman", Times, serif;
+}
+
+.dashboard_sidebar_li:hover{
+	background-color: #eeeeee;
+	font-size: 15px;
+}

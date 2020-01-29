@@ -27,7 +27,7 @@ class site_hash {
 	}
 
 	public function test_case_hash($test_case_id){
-		return $this->generate_hash_val("test_case",$test_case_id);
+		return hash('sha256',$this->generate_hash_val("test_case",$test_case_id));
 	}
 
 

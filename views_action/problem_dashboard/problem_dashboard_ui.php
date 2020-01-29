@@ -53,16 +53,62 @@
 		echo "<center><button onclick='update_test_case()' id='btn_update' value='$hash_id'>Update Test Case</button></center>";
 	}
 
+	else if(isset($_GET['load_overview_page'])){
+		echo "<div class='ui-widget'>
+  			<label for='tags'>Tags: </label>
+  			<input id='tags'>
+	</div>";
+	}
+
+	else if(isset($_GET['load_moderators_page'])){
+		$problem_id=$_GET['load_moderators_page'];
+		echo "
+		<div class='row'>
+			<div class='col-md-3'></div>
+			<div class='col-md-6'>
+				Enter Moderators Handle:
+				<input type='text' onkeyup='search_moderators()' autocomplete='off' class='form-control' id='search_moderators' placeholder='Example input'>
+				<div id='suggestion_box' class='moderators_suggestion_box'>
+					
+				</div>
+			</div>
+			<div class='col-md-3'></div>
+			<div class='col-md-3'></div>
+			<div class='col-md-6'>
+				profile
+			</div>
+
+		</div>";
+	}
+
 
 ?>
 
+
 <style type="text/css">
-	.dashboard_input_text_area{
-		width: 100%;
-		outline: none;
-		height: 150px;
-		border-radius: 5px;
-		background-color: #F7F7F7;
+	.moderators_suggestion_li{
 		padding: 5px;
+		border: 1px solid #C2C7D0;
+		border-width: 0px 1px 1px 1px;
+		margin-top: 1px;
+		width: 100%;
+		font-size: 16px;
+		cursor: pointer;
+		border-radius: 0px;
+	}
+	.moderators_suggestion_li:hover{
+		background-color: #A0B4C3;
+	}
+	
+	.moderators_suggestion_box{
+		position: absolute;
+		width: 100%;
+		margin-top: -8px;
+		border-radius: 0px;
+	}
+	.moderators_suggestion_li_img{
+		height: 50px;
+		width: 50px;
+		margin-right: 5px;
 	}
 </style>

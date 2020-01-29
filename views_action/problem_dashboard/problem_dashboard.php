@@ -1,6 +1,11 @@
 <?php
+	
+	if(!$isLoggedIn){
+		include "404.php";
+		return;
+	}
 
-
+	
 	if(isset($_GET['problem_preview'])){
 		$problem_format->build_problem_format($_GET['problem_preview']);
 	}
