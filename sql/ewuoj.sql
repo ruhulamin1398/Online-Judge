@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2020 at 09:31 PM
+-- Generation Time: Feb 03, 2020 at 03:11 PM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -27,27 +27,88 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `problems` (
-  `problem_id` int(11) NOT NULL,
-  `problem_name` text NOT NULL,
-  `problem_description` text NOT NULL,
-  `input_description` text NOT NULL,
-  `output_description` text NOT NULL,
-  `constraint_description` text NOT NULL,
-  `input_example` text NOT NULL,
-  `output_example` text NOT NULL,
+  `problemId` int(11) NOT NULL,
+  `problemName` text NOT NULL,
+  `problemDescription` text NOT NULL,
+  `inputDescription` text NOT NULL,
+  `outputDescription` text NOT NULL,
+  `constraintDescription` text NOT NULL,
+  `inputExample` text NOT NULL,
+  `outputExample` text NOT NULL,
   `notes` text NOT NULL,
-  `cpu_time_limit` float NOT NULL DEFAULT '2',
-  `memory_limit` int(11) NOT NULL DEFAULT '128000',
-  `user_id` int(11) NOT NULL,
-  `problem_added_date` datetime NOT NULL
+  `cpuTimeLimit` float NOT NULL DEFAULT '2',
+  `memoryLimit` int(11) NOT NULL DEFAULT '128000',
+  `userId` int(11) NOT NULL,
+  `problemAddedDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `problems`
+-- Triggers `problems`
+--
+DELIMITER $$
+CREATE TRIGGER `TG_InsertProblemModerator` AFTER INSERT ON `problems` FOR EACH ROW BEGIN
+    INSERT INTO problem_moderator(problemId, userId,moderatorRoles)
+        VALUES(new.problemId,new.userId,10);
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `problem_moderator`
 --
 
-INSERT INTO `problems` (`problem_id`, `problem_name`, `problem_description`, `input_description`, `output_description`, `constraint_description`, `input_example`, `output_example`, `notes`, `cpu_time_limit`, `memory_limit`, `user_id`, `problem_added_date`) VALUES
-(1, 'Hello', '<p><span class="equation">\\(a\\bigoplus b\\)</span>&nbsp;You are given an unweighted tree with&nbsp;nn&nbsp;vertices. Recall that a tree is a connected undirected graph without cycles.</p>\n\n<p>Your task is to choose&nbsp;three distinct&nbsp;vertices&nbsp;a,b,ca,b,c&nbsp;on this tree such that the number of edges which belong to&nbsp;at least&nbsp;one of the simple paths between&nbsp;aa&nbsp;and&nbsp;bb,&nbsp;bb&nbsp;and&nbsp;cc, or&nbsp;aa&nbsp;and&nbsp;cc&nbsp;is the maximum possible. See the notes section for a better understanding.</p>\n\n<p>The simple path is the path that visits each vertex at most once.</p>\n', '<em><strong><span class="equation">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</span>Input starts with an integer </strong>T denoting the number of test cases.Each case contains two integers: N, K.and tetere</em>', 'For each test case, print the&nbsp;<strong>number of trailing zeroes</strong>&nbsp;in your result.', '<span class="equation">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</span><br />\n<span class="equation">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</span>', '6<br />\nLRU<br />\nDURLDRUDRULRDURDDL<br />\nLRUDDLRUDRUL<br />\nLLLLRRRR<br />\nURDUR<br />\nLLL', '2<br />\nLR<br />\n14<br />\nRUURDDDDLLLUUR<br />\n12<br />\nULDDDRRRUULL<br />\n2<br />\nLR<br />\n2<br />\nUD<br />\n7', '<p>There are only two possible answers in the first test case: &quot;LR&quot; and &quot;RL&quot;.</p>\n\n<p>The picture corresponding to the second test case:</p>\n<img src="https://espresso.codeforces.com/b8d040c328a3c50a5e36b8d6da86a6e5f2b67b52.png" /><br />\n&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Note that the direction of traverse does not matter\n<p>Another correct answer to the third test case: &quot;URDDLLLUURDR&quot;.</p>\n', 2, 128000, 1, '2020-01-24 00:00:00');
+CREATE TABLE `problem_moderator` (
+  `problemModeratorId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `problemId` int(11) NOT NULL,
+  `moderatorRoles` int(11) NOT NULL DEFAULT '20'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `submissions`
+--
+
+CREATE TABLE `submissions` (
+  `submissionId` int(11) NOT NULL,
+  `submissionType` int(11) NOT NULL DEFAULT '1',
+  `problemId` int(11) NOT NULL,
+  `sourceCode` text NOT NULL,
+  `languageId` int(11) NOT NULL,
+  `maxTimeLimit` float NOT NULL DEFAULT '0',
+  `maxMemoryLimit` int(11) NOT NULL DEFAULT '0',
+  `runOnMaxTime` float NOT NULL DEFAULT '0',
+  `runOnMaxMemory` int(11) NOT NULL DEFAULT '0',
+  `userId` int(11) NOT NULL,
+  `submissionTime` datetime NOT NULL,
+  `submissionVerdict` int(11) NOT NULL DEFAULT '1',
+  `testCaseReady` int(11) NOT NULL DEFAULT '-1',
+  `judgeComplete` int(11) NOT NULL DEFAULT '0',
+  `runOnTest` int(11) NOT NULL DEFAULT '1',
+  `totalTestCase` int(11) NOT NULL DEFAULT '0',
+  `threadId` int(11) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `submissions_on_test_case`
+--
+
+CREATE TABLE `submissions_on_test_case` (
+  `submissionTestCaseId` int(11) NOT NULL,
+  `submissionId` int(11) NOT NULL,
+  `testCaseSerialNo` int(11) NOT NULL,
+  `testCaseToken` varchar(100) NOT NULL,
+  `judgeStatus` int(11) NOT NULL DEFAULT '-1',
+  `verdict` int(11) NOT NULL DEFAULT '1',
+  `totalTime` float NOT NULL DEFAULT '0',
+  `totalMemory` int(11) NOT NULL DEFAULT '0',
+  `responseData` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -56,22 +117,12 @@ INSERT INTO `problems` (`problem_id`, `problem_name`, `problem_description`, `in
 --
 
 CREATE TABLE `test_case` (
-  `test_case_id` int(11) NOT NULL,
-  `test_case_id_hash` varchar(150) DEFAULT NULL,
-  `problem_id` int(11) NOT NULL,
-  `test_case_added_date` datetime NOT NULL,
-  `user_id` int(11) NOT NULL
+  `testCaseId` int(11) NOT NULL,
+  `testCaseIdHash` varchar(150) DEFAULT NULL,
+  `problemId` int(11) NOT NULL,
+  `testCaseAddedDate` datetime NOT NULL,
+  `userId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `test_case`
---
-
-INSERT INTO `test_case` (`test_case_id`, `test_case_id_hash`, `problem_id`, `test_case_added_date`, `user_id`) VALUES
-(60, 'NDJjMzA5ZmYzYzZkNTE3MjFiNDcxOGZkNzJhZjAxZTFjODU5YzY0Y2UxZDQwMGRlYzgzMThmMmI0Zjc1NTdkNA==', 1, '2020-01-28 14:56:07', 1),
-(61, 'Y2UyNTYyZDg3Yzc0MTAxMjI4NzViZDUxZjMzZGUxNWViMzRmYjI3YmVhZDBlMGZiNTI3ODg5NmFiOTY4NzkzNw==', 1, '2020-01-28 15:03:07', 1),
-(62, 'Yzc5Yzg5MmZiZjdhYjRiMTBjZTA4OTQyOWJjYjc0NDNjNTBmOTJhNGNlZmJhNmFhY2IwNDhhZDRkZTBjZGI3ZA==', 1, '2020-01-28 14:08:31', 1),
-(66, 'ade10caf763fec757430a2d399fb3c60bfd9875764db1bd27fe56c2a6909db21', 1, '2020-01-29 20:41:59', 1);
 
 -- --------------------------------------------------------
 
@@ -80,31 +131,17 @@ INSERT INTO `test_case` (`test_case_id`, `test_case_id_hash`, `problem_id`, `tes
 --
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
-  `user_full_name` text NOT NULL,
-  `user_handle` varchar(15) NOT NULL,
-  `user_email` text NOT NULL,
-  `user_photo` text,
-  `user_ewu_id` text,
-  `user_password` varchar(150) NOT NULL,
-  `user_registration_date` datetime NOT NULL,
-  `user_last_login_info` text
+  `userId` int(11) NOT NULL,
+  `userFullName` text NOT NULL,
+  `userHandle` varchar(15) NOT NULL,
+  `userEmail` text NOT NULL,
+  `userPhoto` text,
+  `userEwuId` text,
+  `userPassword` varchar(150) NOT NULL,
+  `userRoles` int(11) NOT NULL DEFAULT '40',
+  `userRegistrationDate` datetime NOT NULL,
+  `userLastLoginInfo` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`user_id`, `user_full_name`, `user_handle`, `user_email`, `user_photo`, `user_ewu_id`, `user_password`, `user_registration_date`, `user_last_login_info`) VALUES
-(1, '', 'hamza05', 'sk.amirhamza@gmail.com', '', '', 'OTg4NDVhYzc5MWFhYWYxYWMyMDU5YjQ2YTg4MjcyOTAwZWU1YjNjMTA3NTZkYzg1ODU4NzU5ZjU2ODgyNmVhZA==', '2020-01-18 00:00:00', '{"ip":"::1","url":"\\/project\\/EWUOJ\\/site_action.php","time":"2020-01-30 03:29:57"}'),
-(5, 'test', 'test', 'test@gmail.com', NULL, '', 'NTc1MzlkNmI2MjJiYjAzZTA1OTEyZmY1NDkzMzZmZTY0MGE5YzEzYjdmZDNkYTJiYjQ4NTBiNmUwMzBhNmQ0Ng==', '2020-01-20 23:08:00', NULL),
-(6, 'test', 'test1', 'test1@gmail.com', NULL, '2017-1-60-0', 'NWJlMTBiMDFjNGIzMWRkNDNlYmExNzc0NGNkOTNmYzY3NDk2ZGZlYWUyMGRmYzQ3ODBlN2MyZWNiZTdmNGI2Zg==', '2020-01-20 23:10:48', NULL),
-(7, 'hamza', 'hamza051', 'hamza@gmail.com', NULL, '2017-1-60-091', 'NWJlMTBiMDFjNGIzMWRkNDNlYmExNzc0NGNkOTNmYzY3NDk2ZGZlYWUyMGRmYzQ3ODBlN2MyZWNiZTdmNGI2Zg==', '2020-01-20 23:14:34', NULL),
-(8, 'test2', 'test2', 'test2@gmail.com', NULL, '2017-1-60-091', 'NTc1MzlkNmI2MjJiYjAzZTA1OTEyZmY1NDkzMzZmZTY0MGE5YzEzYjdmZDNkYTJiYjQ4NTBiNmUwMzBhNmQ0Ng==', '2020-01-20 23:20:14', NULL),
-(9, 'user1', 'user1', 'user1@gmail.com', NULL, '2017-1-60-091', 'NTc1MzlkNmI2MjJiYjAzZTA1OTEyZmY1NDkzMzZmZTY0MGE5YzEzYjdmZDNkYTJiYjQ4NTBiNmUwMzBhNmQ0Ng==', '2020-01-20 23:23:10', NULL),
-(10, 'user4', 'user4', 'user4@gmaiil.com', NULL, '', 'NTc1MzlkNmI2MjJiYjAzZTA1OTEyZmY1NDkzMzZmZTY0MGE5YzEzYjdmZDNkYTJiYjQ4NTBiNmUwMzBhNmQ0Ng==', '2020-01-20 23:36:10', NULL),
-(11, 'user5', 'user5', 'user5@gmail.com', NULL, '{"year":2017,"semister":1,"department":60,"id":91}', 'NWJlMTBiMDFjNGIzMWRkNDNlYmExNzc0NGNkOTNmYzY3NDk2ZGZlYWUyMGRmYzQ3ODBlN2MyZWNiZTdmNGI2Zg==', '2020-01-20 23:59:22', NULL),
-(12, 'user6', 'user6', 'user6@gmail.com', NULL, '{"year":2017,"semister":1,"department":60,"serial":92}', 'NTc1MzlkNmI2MjJiYjAzZTA1OTEyZmY1NDkzMzZmZTY0MGE5YzEzYjdmZDNkYTJiYjQ4NTBiNmUwMzBhNmQ0Ng==', '2020-01-21 00:01:24', NULL);
 
 --
 -- Indexes for dumped tables
@@ -114,23 +151,46 @@ INSERT INTO `users` (`user_id`, `user_full_name`, `user_handle`, `user_email`, `
 -- Indexes for table `problems`
 --
 ALTER TABLE `problems`
-  ADD PRIMARY KEY (`problem_id`),
-  ADD KEY `fk_problem_user` (`user_id`);
+  ADD PRIMARY KEY (`problemId`),
+  ADD KEY `fk_problem_user` (`userId`);
+
+--
+-- Indexes for table `problem_moderator`
+--
+ALTER TABLE `problem_moderator`
+  ADD PRIMARY KEY (`problemModeratorId`),
+  ADD UNIQUE KEY `UC_UserProblem` (`userId`,`problemId`),
+  ADD KEY `FK_ProblemModeratorProblem` (`problemId`);
+
+--
+-- Indexes for table `submissions`
+--
+ALTER TABLE `submissions`
+  ADD PRIMARY KEY (`submissionId`),
+  ADD KEY `FK_SubmissionUser` (`userId`),
+  ADD KEY `FK_SubmissionProblem` (`problemId`);
+
+--
+-- Indexes for table `submissions_on_test_case`
+--
+ALTER TABLE `submissions_on_test_case`
+  ADD PRIMARY KEY (`submissionTestCaseId`),
+  ADD KEY `FK_SubmissionId` (`submissionId`);
 
 --
 -- Indexes for table `test_case`
 --
 ALTER TABLE `test_case`
-  ADD PRIMARY KEY (`test_case_id`),
-  ADD KEY `fk_test_case_add_by` (`user_id`) USING BTREE,
-  ADD KEY `fk_test_case_problem_id` (`problem_id`);
+  ADD PRIMARY KEY (`testCaseId`),
+  ADD KEY `fk_test_case_add_by` (`userId`) USING BTREE,
+  ADD KEY `fk_test_case_problem_id` (`problemId`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `uc_user_handle` (`user_handle`);
+  ADD PRIMARY KEY (`userId`),
+  ADD UNIQUE KEY `uc_user_handle` (`userHandle`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -140,17 +200,32 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `problems`
 --
 ALTER TABLE `problems`
-  MODIFY `problem_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `problemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `problem_moderator`
+--
+ALTER TABLE `problem_moderator`
+  MODIFY `problemModeratorId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+--
+-- AUTO_INCREMENT for table `submissions`
+--
+ALTER TABLE `submissions`
+  MODIFY `submissionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+--
+-- AUTO_INCREMENT for table `submissions_on_test_case`
+--
+ALTER TABLE `submissions_on_test_case`
+  MODIFY `submissionTestCaseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `test_case`
 --
 ALTER TABLE `test_case`
-  MODIFY `test_case_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `testCaseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- Constraints for dumped tables
 --
@@ -159,14 +234,34 @@ ALTER TABLE `users`
 -- Constraints for table `problems`
 --
 ALTER TABLE `problems`
-  ADD CONSTRAINT `fk_problem_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `fk_problem_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `problem_moderator`
+--
+ALTER TABLE `problem_moderator`
+  ADD CONSTRAINT `FK_ProblemModeratorProblem` FOREIGN KEY (`problemId`) REFERENCES `problems` (`problemId`),
+  ADD CONSTRAINT `FK_ProblemModeratorUserId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `submissions`
+--
+ALTER TABLE `submissions`
+  ADD CONSTRAINT `FK_SubmissionProblem` FOREIGN KEY (`problemId`) REFERENCES `problems` (`problemId`),
+  ADD CONSTRAINT `FK_SubmissionUser` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `submissions_on_test_case`
+--
+ALTER TABLE `submissions_on_test_case`
+  ADD CONSTRAINT `FK_SubmissionId` FOREIGN KEY (`submissionId`) REFERENCES `submissions` (`submissionId`);
 
 --
 -- Constraints for table `test_case`
 --
 ALTER TABLE `test_case`
-  ADD CONSTRAINT `fk_test_case_add_by` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `fk_test_case_problem_id` FOREIGN KEY (`problem_id`) REFERENCES `problems` (`problem_id`);
+  ADD CONSTRAINT `fk_test_case_add_by` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`),
+  ADD CONSTRAINT `fk_test_case_problem_id` FOREIGN KEY (`problemId`) REFERENCES `problems` (`problemId`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
