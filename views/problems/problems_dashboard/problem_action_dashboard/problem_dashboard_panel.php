@@ -8,19 +8,19 @@
         <span href="#" class="list-group-item active" style="background-color: var(--bg-color)">
             Problem Dashboard
         </span>
-        <li onclick="change_option('overview')" class="list-group-item dashboard_sidebar_li">
+        <li onclick="changeOption('overview')" class="list-group-item dashboard_sidebar_li">
             <i class="fa fa-comment-o"></i> OverView
         </li>
-        <li class="list-group-item dashboard_sidebar_li" onclick="change_option('edit')">
+        <li class="list-group-item dashboard_sidebar_li" onclick="changeOption('edit')">
             <i class="fa fa-search"></i> Edit
         </li>
-        <li onclick="change_option('test_case')"  class="list-group-item dashboard_sidebar_li">
+        <li onclick="changeOption('testCase')"  class="list-group-item dashboard_sidebar_li">
             <i class="fa fa-user"></i> Test Case
         </li>
-        <li onclick="change_option('moderators')" class="list-group-item dashboard_sidebar_li">
+        <li onclick="changeOption('moderators')" class="list-group-item dashboard_sidebar_li">
             <i class="fa fa-user"></i> Moderators
         </li>
-        <li class="list-group-item dashboard_sidebar_li">
+        <li onclick="changeOption('testing')" class="list-group-item dashboard_sidebar_li">
             <i class="fa fa-user"></i> Testing
         </li>
         <li class="list-group-item dashboard_sidebar_li">
@@ -46,5 +46,6 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="http://localhost/project/EWUPSC/php_plugin/editarea_0_8_2/editarea_0_8_2/edit_area/edit_area_full.js"></script>
 
 <script type="text/javascript" src="views/problems/problems_dashboard/problem_action_dashboard/js/problem_dashboard.js"></script>

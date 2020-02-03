@@ -1,48 +1,61 @@
 var dashboard_action_url="problem_dashboard_action.php";
+var moderatorsList;
 
 // page ready event ------------------------------------------
 
 $( document ).ready(function() {
-    display_page();
+    displayPage();
 });
 
 
 //site info---------------------------------
 
-function display_page(){
-	if(page_action_name!="edit")
-		change_option(page_action_name);
+function displayPage(){
+	if(pageActionName!="edit")
+		changeOption(pageActionName);
 }
 
-function change_url(action_name,page_name=""){
-	url="problems_dashboard.php?problem_id="+problem_id+"&action="+action_name;
-	var obj = { Title: page_name, Url: url };
+function changeUrl(actionName,pageName=""){
+	url = "problems_dashboard.php?problemId="+problemId+"&action="+actionName;
+	var obj = { Title: pageName, Url: url };
     history.pushState(obj, obj.Title, obj.Url);
 }
 
-function set_header_name(header_name){
-	$("#box_dashboard_header").html(header_name);
+function setHeaderName(headerName){
+	$("#box_dashboard_header").html(headerName);
 }
 
-function change_option(option_name){
-	if(option_name=="test_case"){
-		change_url("test_case");
-		set_header_name("Test Case");
-		load_test_case_page();
+function loadPage(pageName,divName="option_box_body"){
+	loader(divName);
+	$.post(dashboard_action_url,buildData(pageName),function(response){
+		$("#"+divName).html(response);
+	});
+}
+
+function changeOption(optionName){
+	if(optionName=="testCase"){
+		changeUrl(optionName);
+		setHeaderName("Test Case");
+		loadPage("loadTestCasePage");
 	}
-	else if(option_name=='edit'){
-		change_url("edit");
+	else if(optionName=='edit'){
+		changeUrl(optionName);
 		location.reload();
 	}
-	else if(option_name=='moderators'){
-		change_url("moderators");
-		set_header_name("Moderators");
-		load_moderators_page();
+	else if(optionName=='moderators'){
+		changeUrl(optionName);
+		setHeaderName("Moderators");
+		loadModeratorsPage();
+	}
+	else if(optionName=='testing'){
+		changeUrl(optionName);
+		setHeaderName('Testing Problem');
+		loadTestingPage();
 	}
 	else{
-		change_url("overview");
-		set_header_name("Problem Overview");
-		load_overview_page();
+		changeUrl("overview");
+		setHeaderName("Problem Overview");
+		loadPage("loadOverviewPage");
 	}
 
 }
@@ -51,22 +64,33 @@ function change_option(option_name){
 
 //start overview page 
 
-function load_overview_page(){
-	loader("option_box_body");
-	$.get(dashboard_action_url,get_data("load_overview_page"),function(response){
-		$("#option_box_body").html(response);
-	});
-}
 
 //===========================================================
 
-//start overview page
+//start moderator page
 
 
-function load_moderators_page(){
+function loadModeratorsPage(){
 	loader("option_box_body");
-	$.get(dashboard_action_url,get_data("load_moderators_page",problem_id),function(response){
+	$.post(dashboard_action_url,buildData("loadModeratorsPage",problemId),function(response){
 		$("#option_box_body").html(response);
+		getModeratorsList();
+	});
+}
+
+function getModeratorsList(){
+	$.post(dashboard_action_url,buildData("getModeratorsList",problemId),function(response){
+		moderatorsList=JSON.parse(response);
+	});
+}
+
+function addProblemModerator(userId){
+	var data = {
+		'userId': userId,
+		'problemId': problemId
+	}
+	$.post(dashboard_action_url,buildData("addProblemModerator",data),function(response){
+		loadModeratorsPage();
 	});
 }
 
@@ -78,14 +102,18 @@ function search_moderators(){
 		{ "handle":"Zarry", "id":24}
 	];
 	$('#suggestion_box').html("");
+
 	var search_val=$("#search_moderators").val();
-	$.each(obj, function() {
-		if (this.handle.toLowerCase().includes(search_val.toLowerCase())==true && search_val.length>=1){
+	var co=0;
+	$.each(moderatorsList, function() {
+		if (this.userHandle.toLowerCase().includes(search_val.toLowerCase())==true && search_val.length>=1){
+			co=co+1;
+			if(co>5)return;
 			$('#suggestion_box').append(
-        		"<li class='list-group-item moderators_suggestion_li'>"+
-        		"<img class='img-thumbnail moderators_suggestion_li_img' src='https://hrcdn.net/s3_pub/hr-avatars/2655d5c2-7594-47b7-969a-c2f16daccc87/150x150.png'> "
-        		+this.handle+
-        		"</li>"
+        		"<li class='list-group-item moderators_suggestion_li' onclick='addProblemModerator("+this.userId+")'>"+
+        		"<img class='img-thumbnail moderators_suggestion_li_img' src='"+this.userPhoto+"'><b> "
+        		+this.userHandle+
+        		"</b></li>"
     		);
 		}
     	
@@ -94,71 +122,118 @@ function search_moderators(){
 
 //===========================================================
 
-//start test case function
+// start submission page 
 
-function load_test_case_page(){
-
+function loadTestingPage(){
 	loader("option_box_body");
-	$.get(dashboard_action_url,get_data("load_test_case_page"),function(response){
+	$.post(dashboard_action_url,buildData("loadTestingPage",problemId),function(response){
 		$("#option_box_body").html(response);
 	});
 }
 
-function load_add_test_case_page(){
+function loadCreateSubmissionPage(){
+	modalOpen("md","Create Submission");
+	loader("modal_md_body");
+	$.post(dashboard_action_url,buildData("loadCreateSubmissionPage",problemId),function(response){
+		$("#modal_md_body").html(response);
+		setEditorLanguage('CPP');
+	});
+}
+
+function createSubmission(){
+	var data = {
+		'languageId': 13,
+		'sourceCode': editAreaLoader.getValue("sourceCodeEditor"),
+		'problemId': problemId
+	}
+	console.log(data);
+	$.post(dashboard_action_url,buildData("createSubmission",data),function(response){
+		//$("#modal_md_body").html(response);
+		modal_action("md","Add Test Case","close");
+		loadTestingPage();
+	});
+}
+
+function setEditorLanguage(language){
+	editAreaLoader.init({
+        id: "sourceCodeEditor",  
+        start_highlight: true,
+        allow_resize: "both",
+        allow_toggle: false,
+        word_wrap: true,
+        language: "en",
+        syntax: language  
+    });
+}
+
+//start test case function
+
+function loadTestCasePage(){
+	loader("option_box_body");
+	$.post(dashboard_action_url,buildData("loadTestCasePage"),function(response){
+		$("#option_box_body").html(response);
+	});
+}
+
+function loadAddTestCasePage(){
 	modal_action("md","Add Test Case");
 	loader("modal_md_body");
-	$.get(dashboard_action_url,get_data("load_add_test_case_page"),function(response){
+	$.post(dashboard_action_url,buildData("loadAddTestCasePage"),function(response){
 		$("#modal_md_body").html(response);
 	});
 }
 
 
 
-function add_test_case(){
+function addTestCase(){
 	var data = {
-		'input': $('#input_value').val(),
-		'output': $('#output_value').val(),
-		'problem_id': problem_id
+		'input': $('#inputValue').val(),
+		'output': $('#outputValue').val(),
+		'problemId': problemId
 	}
 
 	loader("modal_md_body");
-	$.post(dashboard_action_url,get_data("add_test_case",data),function(response){
-		load_test_case_page();
+	$.post(dashboard_action_url,buildData("addTestCase",data),function(response){
+		//$("#modal_md_body").html(response);
+		loadPage("loadTestCasePage");
 		modal_action("md","Add Test Case","close");
 	});
 }
 
-function delete_test_case(btn_sl){
+
+
+function loadEditTestCasePage(btn_sl){
+	modal_action("md","Edit Test Case");
+	var hashId=$("#btn_edit_"+btn_sl).val();
+	loader("modal_md_body");
+	$.post(dashboard_action_url,buildData("loadEditTestCasePage",hashId),function(response){
+		$("#modal_md_body").html(response);
+	});
+}
+
+function updateTestCase(){
+	var data = {
+		'input': $('#inputValue').val(),
+		'output': $('#outputValue').val(),
+		'hashId': $("#btnUpdate").val()
+	}
+	
+	loader("modal_md_body");
+	$.post(dashboard_action_url,buildData("updateTestCase",data),function(response){
+		//$("#modal_md_body").html(response);
+		loadTestCasePage();
+		modal_action("md","Add Test Case","close");
+	});
+}
+
+
+function deleteTestCase(btn_sl){
 	var ok=confirm('Are You Want To Delete This Test Case.');
 	if(!ok)return;
-	var hash_id=$("#btn_del_"+btn_sl).val();
+	var hashId=$("#btn_del_"+btn_sl).val();
 	loader("option_box_body");
-	$.post(dashboard_action_url,get_data("delete_test_case",hash_id),function(response){
-		load_test_case_page();
-	});
-}
-
-function load_edit_test_case_page(btn_sl){
-	modal_action("md","Edit Test Case");
-	var hash_id=$("#btn_edit_"+btn_sl).val();
-	loader("modal_md_body");
-	$.get(dashboard_action_url,get_data("load_edit_test_case_page",hash_id),function(response){
-		$("#modal_md_body").html(response);
-	});
-}
-
-function update_test_case(){
-	var data = {
-		'input': $('#input_value').val(),
-		'output': $('#output_value').val(),
-		'hash_id': $("#btn_update").val()
-	}
-
-	loader("modal_md_body");
-	$.post(dashboard_action_url,get_data("update_test_case",data),function(response){
-		//$("#modal_md_body").html(response);
-		load_test_case_page();
-		modal_action("md","Add Test Case","close");
+	$.post(dashboard_action_url,buildData("deleteTestCase",hashId),function(response){
+		loadTestCasePage();
 	});
 }
 

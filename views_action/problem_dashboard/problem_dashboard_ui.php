@@ -1,7 +1,7 @@
 <?php
-	if(isset($_GET['load_test_case_page'])){
-		$problem_id=$_GET['load_test_case_page'];
-		echo "<div style='text-align: right; margin-bottom: 10px;'><button onclick='load_add_test_case_page()'><span class='glyphicon glyphicon-plus'></span> Add Test Case</button></div>";
+	if(isset($_POST['loadTestCasePage'])){
+		$problemId=$_POST['loadTestCasePage'];
+		echo "<div style='text-align: right; margin-bottom: 10px;'><button onclick='loadAddTestCasePage()'><span class='glyphicon glyphicon-plus'></span> Add Test Case</button></div>";
 		echo "<table width='100%'>";
 		echo "<tr>
 			<td class='td1'>Order</td>
@@ -11,104 +11,136 @@
 			<td class='td1'>Added By</td>
 			<td class='td1'></td>
 			</tr>";
-		$info=$test_case->get_test_case_list(1);
+		$info=$TestCase->getTestCaseList(1);
 		$c=0;
 		foreach ($info as $key => $value) {
 			$c++;
-			$date=$value['test_case_added_date'];
-			$handle=$value['user_handle'];
-			$input_url=$value['input_url'];
-			$input_size=$value['input_file_size'];
-			$output_url=$value['output_url'];
-			$output_size=$value['output_file_size'];
-			$hash_id=$value['test_case_id_hash'];
+			$date=$value['testCaseAddedDate'];
+			$handle=$value['userHandle'];
+			$inputUrl=$value['inputUrl'];
+			$inputSize=$value['inputFileSize'];
+			$outputUrl=$value['outputUrl'];
+			$outputSize=$value['outputFileSize'];
+			$hashId=$value['testCaseIdHash'];
 			echo "<tr>
 			<td class='td2'>$c</td>
-			<td class='td2'><a href='$input_url' target='_blank'>input-$c.txt ($input_size Bytes)</a></td>
-			<td class='td2'><a href='$output_url' target='_blank'>output-$c.txt ($output_size Bytes)</a></td>
+			<td class='td2'><a href='$inputUrl' target='_blank'>input-$c.txt ($inputSize Bytes)</a></td>
+			<td class='td2'><a href='$outputUrl' target='_blank'>output-$c.txt ($outputSize Bytes)</a></td>
 			<td class='td2'>$date</td>
 			<td class='td2'>$handle</td>
 			<td class='td2'> 
-				<button value='$hash_id' class='btn-sm' id='btn_edit_$c' onclick='load_edit_test_case_page($c)'><span class='glyphicon glyphicon-pencil'></span></button>
-				<button id='btn_del_$c' onclick='delete_test_case($c)' value='$hash_id' class='btn-sm'><span class='glyphicon glyphicon-trash'></span></button>
+				<button value='$hashId' class='btn-sm' id='btn_edit_$c' onclick='loadEditTestCasePage($c)'><span class='glyphicon glyphicon-pencil'></span></button>
+				<button id='btn_del_$c' onclick='deleteTestCase($c)' value='$hashId' class='btn-sm'><span class='glyphicon glyphicon-trash'></span></button>
 			</td>
 			</tr>";
 		}
 		echo "</table>";
 	}
 
-	else if(isset($_GET['load_add_test_case_page'])){
-		echo "<b style='font-size: 17px;'>Input</b><br/><textarea class='dashboard_input_text_area' id='input_value'></textarea><br/>";
-		echo "<b style='font-size: 17px;'>Output</b><br/><textarea class='dashboard_input_text_area' id='output_value'></textarea><br/>";
-		echo "<center><button onclick='add_test_case()'>Add Test Case</button></center>";
+	else if(isset($_POST['loadAddTestCasePage'])){
+		echo "<b style='font-size: 17px;'>Input</b><br/><textarea class='dashboard_input_text_area' id='inputValue'></textarea><br/>";
+		echo "<b style='font-size: 17px;'>Output</b><br/><textarea class='dashboard_input_text_area' id='outputValue'></textarea><br/>";
+		echo "<center><button onclick='addTestCase()'>Add Test Case</button></center>";
 	}
 
-	else if(isset($_GET['load_edit_test_case_page'])){
-		$hash_id=$_GET['load_edit_test_case_page'];
-		$info=$test_case->get_test_case_data($hash_id);
+	else if(isset($_POST['loadEditTestCasePage'])){
+		$hashId=$_POST['loadEditTestCasePage'];
+		$info=$TestCase->getTestCaseData($hashId);
 		$input=$info['input'];
 		$output=$info['output'];
-		echo "<b style='font-size: 17px;'>Input</b><br/><textarea class='dashboard_input_text_area' id='input_value'>$input</textarea><br/>";
-		echo "<b style='font-size: 17px;'>Output</b><br/><textarea class='dashboard_input_text_area' id='output_value'>$output</textarea><br/>";
-		echo "<center><button onclick='update_test_case()' id='btn_update' value='$hash_id'>Update Test Case</button></center>";
+		echo "<b style='font-size: 17px;'>Input</b><br/><textarea class='dashboard_input_text_area' id='inputValue'>$input</textarea><br/>";
+		echo "<b style='font-size: 17px;'>Output</b><br/><textarea class='dashboard_input_text_area' id='outputValue'>$output</textarea><br/>";
+		echo "<center><button onclick='updateTestCase()' id='btnUpdate' value='$hashId'>Update Test Case</button></center>";
 	}
 
-	else if(isset($_GET['load_overview_page'])){
+	else if(isset($_POST['loadOverviewPage'])){
 		echo "<div class='ui-widget'>
   			<label for='tags'>Tags: </label>
   			<input id='tags'>
 	</div>";
 	}
 
-	else if(isset($_GET['load_moderators_page'])){
-		$problem_id=$_GET['load_moderators_page'];
+	else if(isset($_POST['loadModeratorsPage'])){
+		$problemId=$_POST['loadModeratorsPage'];
+		$moderatorList=$Problem->getProblemModeratorList($problemId,false);
+		
 		echo "
-		<div class='row'>
-			<div class='col-md-3'></div>
-			<div class='col-md-6'>
-				Enter Moderators Handle:
-				<input type='text' onkeyup='search_moderators()' autocomplete='off' class='form-control' id='search_moderators' placeholder='Example input'>
-				<div id='suggestion_box' class='moderators_suggestion_box'>
-					
-				</div>
-			</div>
-			<div class='col-md-3'></div>
-			<div class='col-md-3'></div>
-			<div class='col-md-6'>
-				profile
-			</div>
+		<div class='row'>	
+			<div class='col-md-7'>
+				<div class='box none_border'>
+				<div class='box_header'>Moderator List</div>
+				<div class='box_body'>
+		";
+		foreach ($moderatorList as $key => $value) {
+			$userPhoto=$value['userPhoto'];
+			$userHandle=$value['userHandle'];
+			$userId=$value['userId'];
+			$moderatorRoles=$value['moderatorRoles'];
 
+			echo "<li class='list-group-item moderators_suggestion_li' onclick='addProblemModerator()'>
+			<img class='img-thumbnail moderators_suggestion_li_img' src='$userPhoto'>
+			<b>$userHandle</b>(Owner)
+			</li>";
+		}	
+
+		echo "</div></div></div>
+			<div class='col-md-5'>
+				<div class='box none_border'>
+				<div class='box_header'>Add Moderator</div>
+				<div class='box_body'>
+					<input type='text' onkeyup='search_moderators()' autocomplete='off' class='form-control' id='search_moderators' placeholder='Enter Moderator Handle'>
+					<div id='suggestion_box' class='moderators_suggestion_box'>
+					</div>
+				</div>
+				</div>
+				</div>
 		</div>";
 	}
 
 
+	if(isset($_POST['loadTestingPage'])){
+		$problemId=$_POST['loadTestingPage'];
+		echo "<div style='text-align: right; margin-bottom: 10px;'><button onclick='loadCreateSubmissionPage()'><span class='glyphicon glyphicon-plus'></span> Create Submission</button></div>";
+
+		echo "<table width='100%'>";
+		echo "<tr>
+			<td class='td1'>#</td>
+			<td class='td1'>When</td>
+			<td class='td1'>Who</td>
+			<td class='td1'>Lang</td>
+			<td class='td1'>Verdict</td>
+			<td class='td1'>Time</td>
+			<td class='td1'>Memory</td>
+			</tr>";
+		$info=$Submission->getSubmissionList('{"problemId":'.$problemId.'}');
+		foreach ($info as $key => $value) {
+			$submissionId=$value['submissionId'];
+			$languageId=$value['languageId'];
+			$userId=$value['userId'];
+			$userHandle=$value['userHandle'];
+			$submissionTime=$value['submissionTime'];
+			$judgeStatus=$value['judgeStatus'];
+			$time=$value['maxTimeLimit'];
+			$memory=$value['maxMemoryLimit'];
+			
+			echo "<tr>
+			<td class='td2'>$submissionId</td>
+			<td class='td2'>$submissionTime</td>
+			<td class='td2'>$userHandle</td>
+			<td class='td2'>$languageId</td>
+			<td class='td2'>$judgeStatus</td>
+			<td class='td2'>$time s</td>
+			<td class='td2'>$memory kb</td>
+			</tr>";
+		}
+		echo "</table>";
+	}
+
+	if(isset($_POST['loadCreateSubmissionPage'])){
+		echo "<textarea id='sourceCodeEditor' style='height: 250px; width: 100%;'></textarea>";
+		echo "<center><button onclick='createSubmission()'>Submit</button></center>";
+	}
+
+
+
 ?>
-
-
-<style type="text/css">
-	.moderators_suggestion_li{
-		padding: 5px;
-		border: 1px solid #C2C7D0;
-		border-width: 0px 1px 1px 1px;
-		margin-top: 1px;
-		width: 100%;
-		font-size: 16px;
-		cursor: pointer;
-		border-radius: 0px;
-	}
-	.moderators_suggestion_li:hover{
-		background-color: #A0B4C3;
-	}
-	
-	.moderators_suggestion_box{
-		position: absolute;
-		width: 100%;
-		margin-top: -8px;
-		border-radius: 0px;
-	}
-	.moderators_suggestion_li_img{
-		height: 50px;
-		width: 50px;
-		margin-right: 5px;
-	}
-</style>

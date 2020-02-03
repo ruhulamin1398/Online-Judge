@@ -1,14 +1,14 @@
 <?php
-class site {
+class Site {
    
 //starting connection
  public function __construct(){
      
-     $this->db=new database();
-     $this->conn=$this->db->conn;
+     $this->DB=new Database();
+     $this->conn=$this->DB->conn;
  }
 
-  public function get_back_page_url(){
+  public function getBackPageUrl(){
 
  	  $main_url=$_SERVER['REQUEST_URI'];
 
@@ -25,11 +25,25 @@ class site {
   	return  base64_encode($page_name==""?"index.php":$page_name);
   }
 
-  public function create_file($url,$file_name,$txt){
+  public function createFile($url,$file_name,$txt){
       $new_file_name=$url.$file_name;
       $file = fopen($new_file_name, "w");
       fwrite($file, $txt);
       fclose($file);
+  }
+
+  public function readFile($path){
+    $basePath=dirname(__FILE__);
+    //problem for cpanel path cronjob need specefic file name otherwise its go to infinate loop
+    if (!strpos($basePath, 'wamp64') !== false)
+       $path=str_replace("/",'\\', $basePath.'/'.$path);
+    $file = fopen($path, "r");
+    $data="";
+    while(!feof($file)) {
+      $data.=fgets($file);
+    }
+    fclose($file);
+    return $data;
   }
  
 

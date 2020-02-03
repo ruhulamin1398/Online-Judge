@@ -1,29 +1,35 @@
 <?php
-class user {
+class User {
    
 //starting connection
  public function __construct(){
      
-     $this->db=new database();
+     $this->db=new Database();
      $this->conn=$this->db->conn;
  }
  
- public function get_user_info(){
+ public function getUserInfo(){
 
  	$sql="select * from users";
- 	$data=$this->db->get_sql_array($sql);
+ 	$data=$this->db->getData($sql);
  	print_r($data);
  }
 
- public function update_user_status(){
+ public function getSingleUserInfo($userId){
+ 	$sql="select * from users where userId=$userId";
+ 	$data=$this->db->getData($sql);
+ 	return $data;
+ }
+
+ public function updateUserStatus(){
  	if($this->db->isLoggedIn){
- 		$data['user_id']=$this->db->isLoggedIn;
- 		$data['user_last_login_info']=mysqli_real_escape_string($this->db->conn, $this->get_user_status());
- 		$this->db->sql_action("users","update",$data);
+ 		$data['userId']=$this->db->isLoggedIn;
+ 		$data['userLastLoginInfo']=mysqli_real_escape_string($this->db->conn, $this->getUserStatus());
+ 		$this->db->pushData("users","update",$data);
  	}
  }
 
- public function get_user_status(){
+ public function getUserStatus(){
  	$info=array();
  	
  	if (!empty($_SERVER['HTTP_CLIENT_IP']))   

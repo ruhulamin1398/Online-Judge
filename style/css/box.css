@@ -26,6 +26,9 @@
 .sm_border{
 	border-width: 1px!important;
 }
+.one_border{
+	border-width: 1px!important;
+}
 .none_border{
 	border-width: 0px!important;
 }

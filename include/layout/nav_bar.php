@@ -1,4 +1,4 @@
-  <?php $page=$site->get_back_page_url(); ?>
+  <?php $page=$Site->getBackPageUrl(); ?>
   <nav class="navbar navbar-default navbar-fixed-top navbar_style" style="">
 
   <div class="container-fluid">

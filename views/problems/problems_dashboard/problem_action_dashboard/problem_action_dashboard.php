@@ -3,9 +3,9 @@
     $ok=0;
     $problem_id;
     $page_action_name="";
-    if(isset($_GET['problem_id'])){
+    if(isset($_GET['problemId'])){
         $ok=1;
-        $problem_id=$_GET['problem_id'];
+        $problem_id=$_GET['problemId'];
     }
     if($ok==0){
         include "404.php";
@@ -16,7 +16,7 @@
         $page_action_name=$_GET['action'];
 
     echo "<script>
-    var problem_id=$problem_id,page_action_name='$page_action_name';
+    var problemId=$problem_id,pageActionName='$page_action_name';
     </script>";
 
     $path="views/problems/problems_dashboard/problem_action_dashboard/";

@@ -6,24 +6,35 @@
 	}
 
 	
-	if(isset($_GET['problem_preview'])){
-		$problem_format->build_problem_format($_GET['problem_preview']);
+	if(isset($_POST['previewProblem'])){
+		$ProblemFormat->buildProblemFormat($_POST['previewProblem']);
 	}
 
-	else if(isset($_POST['update_problem'])){
-		$problem->update_problem($_POST['update_problem']);
+	else if(isset($_POST['updateProblem'])){
+		$Problem->updateProblem($_POST['updateProblem']);
 	}
 
-	else if(isset($_POST['add_test_case'])){
-		$test_case->add_test_case($_POST['add_test_case']);
+	else if(isset($_POST['addTestCase'])){
+		$TestCase->addTestCase($_POST['addTestCase']);
 
 	}
-	else if(isset($_POST['delete_test_case'])){
-		$test_case->delete_test_case($_POST['delete_test_case']);
+	else if(isset($_POST['deleteTestCase'])){
+		$TestCase->deleteTestCase($_POST['deleteTestCase']);
 	}
 
-	if(isset($_POST['update_test_case'])){
-		$test_case->update_test_case($_POST['update_test_case']);
+	if(isset($_POST['updateTestCase'])){
+		$TestCase->updateTestCase($_POST['updateTestCase']);
+	}
+
+	if(isset($_POST['createSubmission'])){
+		$Submission->createSubmission($_POST['createSubmission'],1);
+	}
+	else if(isset($_POST['getModeratorsList'])){
+		echo $Problem->getNonProblemModeratorList($_POST['getModeratorsList'],true);
+	}
+
+	else if(isset($_POST['addProblemModerator'])){
+		$Problem->addProblemModerator($_POST['addProblemModerator']);
 	}
 
 	else 

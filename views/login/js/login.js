@@ -9,16 +9,21 @@ function login(){
 		'handle': $("#handle").val(),
 		'password': $("#password").val()
 	}
-	btn_off("btn_login","Login Process");
+	btnOff("btn_login","Login Process");
 	$("#login_success").hide();
 	$("#login_failed").hide();
-	$.post("site_enter_action.php",get_data("login",data),function(response){
+	$.post("site_enter_action.php",buildData("login",data),function(response){
+		
+		// debug----------------
+		$("#login_failed").show();
+		$("#login_failed").html(response);
+		
 		response=JSON.parse(response);
 		var login_div=(response.error==0)?"login_success":"login_failed";
 		$("#"+login_div).show();
 		$("#"+login_div).html(response.msg);
 		if(response.error==0)
 			location.reload();
-		btn_on("btn_login","Login Your ID");
+		btnOn("btn_login","Login Your ID");
 	});
 }

@@ -1,9 +1,9 @@
 <?php
-class class_name {
+class ClassName {
    
  	public function __construct(){
-     	$this->db=new database();
-     	$this->conn=$this->db->conn;
+     	$this->DB=new Database();
+     	$this->conn=$this->DB->conn;
  	}
  
 }

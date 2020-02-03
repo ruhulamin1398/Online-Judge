@@ -54,3 +54,29 @@
 	background-color: #eeeeee;
 	font-size: 15px;
 }
+
+.moderators_suggestion_li{
+		padding: 5px;
+		border: 1px solid #C2C7D0;
+		border-width: 0px 1px 1px 1px;
+		margin-top: 1px;
+		width: 100%;
+		font-size: 16px;
+		cursor: pointer;
+		border-radius: 0px;
+}
+	.moderators_suggestion_li:hover{
+		background-color: #A0B4C3;
+	}
+	
+	.moderators_suggestion_box{
+		position: inherit;
+		width: 100%;
+		margin-top: -8px;
+		border-radius: 0px;
+	}
+	.moderators_suggestion_li_img{
+		height: 50px;
+		width: 50px;
+		margin-right: 5px;
+	}

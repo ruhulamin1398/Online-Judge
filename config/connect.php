@@ -1,5 +1,5 @@
 <?php
-class database
+class Database
 {
     
     public $host = db_host;
@@ -8,14 +8,13 @@ class database
     public $db = db_name;
     public $result;
     public $conn;
-    public $site_name="Alom Enterprice";
     public $isLoggedIn;
 
     //conection start
     public function __construct()
     {
         $this->connection();
-        $this->set_logged_in_id();
+        $this->setLoggedInId();
         date_default_timezone_set('Asia/Dhaka');
     }
     
@@ -28,17 +27,21 @@ class database
             return 1;
     }
 
-    public function set_logged_in_id(){
+    public function setLoggedInId(){
         $this->isLoggedIn=(isset($_SESSION['oj_login_handle_id']))?$_SESSION['oj_login_handle_id']:0;
     } 
 
     public function date(){
-        return $this->get_now_time();
+        return $this->getNowTime();
     }
 
-    public function get_now_time(){
+    public function getNowTime(){
         $now=date("Y-m-d H:i:s", time());
         return $now;
+    }
+
+    public function buildSqlString($string){
+        return mysqli_real_escape_string($this->conn,$string);
     }
     
     public function select($query)
@@ -49,12 +52,12 @@ class database
         return $this->result;
     }
     
-    public function date_to_string($date)
+    public function dateToString($date)
     {
         return date("d M Y h:i:A", strtotime($date));
     }
 
-    public function get_select_last_id($query)
+    public function getSelectLastId($query)
     {
         
         if (mysqli_query($this->conn, $query)) {
@@ -63,7 +66,7 @@ class database
             0;
     }
     
-    public function process_mysql_array($info)
+    public function processMysqlArray($info)
     {
         $res = array();
         $c   = 0;
@@ -74,27 +77,32 @@ class database
         }
         return $res;
     }
+
+    public function getData($sql,$json=false){
+        $data=$this->getSqlArray($sql);
+        return $json?json_encode($data):$data;
+    }
     
-    public function get_sql_array($sql)
+    public function getSqlArray($sql)
     {
         $info = array();
         $res  = $this->select($sql);
         while ($row = mysqli_fetch_array($res)) {
             $sub = array();
-            $sub = $this->process_mysql_array($row);
+            $sub = $this->processMysqlArray($row);
             array_push($info, $sub);
         }
         return $info;
     }
     
-    public function make_json_msg($error,$msg){
+    public function makeJsonMsg($error,$msg){
         $data=array();
         $data['error']=$error;
         $data['msg']=$msg;
         return json_encode($data);
     }
 
-    public function insert_sql($arr, $table)
+    public function buildInsertSql($arr, $table)
     {
         $sql = "";
         $sql .= "INSERT INTO " . $table;
@@ -103,9 +111,9 @@ class database
         return $sql;
     }
     
-    public function Update_sql($arr, $table)
+    public function buildUpdateSql($arr, $table)
     {
-        $pk=$this->get_pk($table);
+        $pk=$this->getPk($table);
         $sql = "";
         $sql .= "UPDATE " . $table . " SET ";
         $condition = "";
@@ -123,19 +131,19 @@ class database
     }
     
     
-    public function sql_action($table, $action, $info,$json=false)
+    public function pushData($table, $action, $info,$json=false)
     {
         
         $flag        = 0;
         $action_name = "";
-        $pk=$this->get_pk($table);
+        $pk=$this->getPk($table);
         
         if ($action == "update") {
             $action_name = "Update " . $table;
-            $sql         = $this->update_sql($info, $table);
+            $sql         = $this->buildUpdateSql($info, $table);
         } else if ($action == "insert") {
             $action_name = "Insert New " . $table;
-            $sql         = $this->insert_sql($info, $table);
+            $sql         = $this->buildInsertSql($info, $table);
         } else if ($action == "delete") {
             $id          = $info[$pk];
             $action_name = "Delete " . $table;
@@ -157,39 +165,39 @@ class database
         
         if ($flag == 0) {
             $error['error']       = 1;
-            $error['error_msg'] = $this->error_type_find(mysqli_error($this->conn));
+            $error['error_msg'] = $this->errorTypeFind(mysqli_error($this->conn));
         }
         
         return $json?json_encode($error):$error;
     }
 
-    public function get_last_insert_id(){
+    public function getLastInsertId(){
        return $this->conn->insert_id;
     }
 
-    public function get_pk($table_name){
+    public function getPk($table_name){
 
         $sql="SHOW KEYS FROM $table_name WHERE Key_name = 'PRIMARY'";
-        $res=$this->get_sql_array($sql);
+        $res=$this->getData($sql);
         $pk=$res[0]['Column_name'];
         return $pk;
     }
 
-    public function get_all_pk(){
+    public function getAllPk(){
         $dbname=$this->db;
         $sql = "SHOW TABLES FROM $dbname";
-        $res=$this->get_sql_array($sql);
+        $res=$this->getData($sql);
         $pk_list=array();
         $name="Tables_in_$dbname";
         foreach ($res as $key => $value) {
             $table_name=$value[$name];
-            $pk=$this->get_pk($table_name);
+            $pk=$this->getPk($table_name);
             $pk_list[$table_name]=$pk;
         }
         return $pk_list;
     }
 
-    public function error_type_find($error){
+    public function errorTypeFind($error){
         $error_type=array();
         return $error;
         $error_type['foreign key constraint fails']="Integrity constraint violation.You Already This Data Use In Other Table.";
@@ -199,11 +207,6 @@ class database
         return $error;
     }
 
-    public function check_substring($st1,$st2){
-        $strp=strpos($st1, $st2);
-        return ( $strp>= 0 && $strp < strlen($st1))?1:0;
-    }
-    
     // conection end
 }
 ?>

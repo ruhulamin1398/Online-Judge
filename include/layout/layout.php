@@ -22,7 +22,7 @@
 
     <?php
         if($isLoggedIn)
-            echo "<script>setInterval(function(){ update_site_status(); }, 3000);</script>";
+            echo "<script>setTimeout(function(){ update_site_status(); }, 500);</script>";
 
     ?>
 

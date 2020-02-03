@@ -1,33 +1,33 @@
 <?php
-class site_hash {
+class SiteHash {
    	
-   	public $hash_prefix=array();
-   	public $hash_postfix=array();
+   	public $hashPrefix=array();
+   	public $hashPostfix=array();
 
    	public function __construct(){
      	//user password
-     	$this->hash_prefix['user_password']="@UsEr#@#PaSs@";
-     	$this->hash_postfix['user_password']="#O@J#";
+     	$this->hashPrefix['userPassword']="@UsEr#@#PaSs@";
+     	$this->hashPostfix['userPassword']="#O@J#";
 
-     	$this->hash_prefix['test_case']="##@@@@@Test@@@@@CaSE";
-     	$this->hash_postfix['test_case']="O#######J";
+     	$this->hashPrefix['testCase']="##@@@@@Test@@@@@CaSE";
+     	$this->hashPostfix['testCase']="O#######J";
      	
  	}
  
-	public function common_hash_function($hash_val){
-		return base64_encode(hash('sha256', $hash_val));
+	public function commonHashFunction($hashVal){
+		return base64_encode(hash('sha256', $hashVal));
 	}
 
-	public function generate_hash_val($table,$val){
-		return $this->common_hash_function($this->hash_prefix[$table].$val.$this->hash_postfix[$table]);
+	public function generateHashVal($table,$val){
+		return $this->commonHashFunction($this->hashPrefix[$table].$val.$this->hashPostfix[$table]);
 	}
 
-	public function user_password_hash($pass){
-		return $this->generate_hash_val("user_password",$pass);
+	public function userPasswordHash($pass){
+		return $this->generateHashVal("userPassword",$pass);
 	}
 
-	public function test_case_hash($test_case_id){
-		return hash('sha256',$this->generate_hash_val("test_case",$test_case_id));
+	public function testCaseHash($testCaseId){
+		return hash('sha256',$this->generateHashVal("testCase",$testCaseId));
 	}
 
 
