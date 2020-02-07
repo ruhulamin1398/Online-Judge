@@ -1,6 +1,14 @@
-<?php
-	include "script.php";
-	$JudgeProcess->processSingleSubmission();
+<script type="text/javascript" src="style/lib/jquery/jquery.min.js"></script>
+<div id='response'></div>
 
+<script type="text/javascript">
+	setInterval(function(){ 
+		callServer();
+	}, 1000);
 
-?>
+	function callServer() {
+  		$.get("process_server.php",function(response) { 
+    		$("#response").html(response);
+  		});
+	}
+</script>

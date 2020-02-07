@@ -33,28 +33,50 @@ class Submission {
  			$submissionVerdict=$value['submissionVerdict'];
  			$runOnTest=$value['runOnTest'];
 
- 			$status="In queue";
+ 			$status=$this->getVerdict(0);
  			if($testCaseReady==0)
- 				$status="Processing";
+ 				$status=$this->getVerdict(1);
  			else if($testCaseReady==1){
  				if($judgeComplete==0)
- 					$status="Running On Test $runOnTest";
+ 					$status=$this->getVerdict(2,$runOnTest);
  				else
  					$status=$this->getVerdict($submissionVerdict);
  			}
 
- 			$data[$key]['judgeStatus']=$this->getVerdictStyle($status);
+ 			$data[$key]['judgeStatus']=$status;
  		}
  		return $data;
  	}
 
- 	public function getVerdict($verdictId){
- 		return "Accept";
+ 	public function getVerdict($verdictId,$testCaseRun=-1){
+
+ 		$verdictClass="danger";
+ 		$verdictName="";
+ 		if($verdictId==0){
+ 			$verdictName="In Queue";
+ 			$verdictClass="default";
+ 		}
+ 		else if($verdictId==1){
+ 			$verdictName="Processing";
+ 			$verdictClass="info";
+ 		}
+ 		else if($verdictId==2){
+ 			$verdictName="Running On Test $testCaseRun";
+ 			$verdictClass="primary";
+ 		}
+ 		else if($verdictId==3){
+ 			$verdictName="Accepted";
+ 			$verdictClass="success";
+ 		}
+ 		else if($verdictId==4)$verdictName="Wrong answer";
+ 		else if($verdictId==5)$verdictName="Time limit exceeded";
+ 		else $verdictName="Compailer Error";
+        
+ 		$verdictClass="label label-$verdictClass";
+
+ 		return "<span class='$verdictClass'>$verdictName</span>";
  	}
 
- 	public function getVerdictStyle($verdict){
- 		return "<span style='color: #000000'>$verdict</span>";
- 	}
 
 
  	public function createSubmission($info,$submissionType=2){
@@ -66,6 +88,7 @@ class Submission {
  				Problem=2
  				Contest=3
  		*/
+ 		$info['sourceCode']=base64_decode($info['sourceCode']);
  		$info['sourceCode']=$this->DB->buildSqlString($info['sourceCode']);
  		$info['submissionType']=$submissionType;
  		$info['userId']=$this->loggedIn;
