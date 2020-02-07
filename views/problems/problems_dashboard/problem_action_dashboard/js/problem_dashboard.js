@@ -125,11 +125,16 @@ function search_moderators(){
 // start submission page 
 
 function loadTestingPage(){
-	loader("option_box_body");
+
+	//loader("option_box_body");
 	$.post(dashboard_action_url,buildData("loadTestingPage",problemId),function(response){
 		$("#option_box_body").html(response);
 	});
 }
+
+setInterval(function(){ 
+		//loadTestingPage();
+}, 1000);
 
 function loadCreateSubmissionPage(){
 	modalOpen("md","Create Submission");
@@ -142,7 +147,7 @@ function loadCreateSubmissionPage(){
 
 function createSubmission(){
 	var data = {
-		'languageId': 13,
+		'languageId': 53,
 		'sourceCode': editAreaLoader.getValue("sourceCodeEditor"),
 		'problemId': problemId
 	}

@@ -34,6 +34,7 @@ class JudgeProcess {
  		if($this->submissionProcessId!=-1){
  			$this->setSubmissionProcessThread();
  			$this->setTestCase();
+ 			$this->saveDatabaseTestCase();
  			$this->resetSubmissionProcessThread();
  			$this->clearData();
  		}
@@ -48,7 +49,7 @@ class JudgeProcess {
 
  		$this->processSingleSubmission();
 	    
-	    if($totalProcess<=50){
+	    if($totalProcess<=45){
 	        sleep(1);
 	        $this->processMultipleSubmission($totalProcess+1);
 	    }
@@ -65,8 +66,9 @@ class JudgeProcess {
 		*		-> 1 = ready for judge
  		********************************************************************************/
 
- 		$sql="select * from submissions natural join problems where testCaseReady=-1 LIMIT 1";
+ 		$sql="select submissions.*,problems.cpuTimeLimit,problems.memoryLimit from submissions join problems on problems.problemId=submissions.problemId where testCaseReady=-1 limit 1";
  		$info=$this->DB->getData($sql);
+ 		
  		if(isset($info[0])){
  			$info=$info[0];
  			$this->submissionInfo=$info;
@@ -144,8 +146,8 @@ class JudgeProcess {
  		$data['cpu_time_limit']=$this->submissionInfo['cpuTimeLimit'];
  		$data['memory_limit']=$this->submissionInfo['memoryLimit'];
         
-        //$token=$this->sendCurlRequest(json_encode($data));
- 		$token="asfsdafsa0";
+        $token=$this->sendCurlRequest(json_encode($data));
+ 		//$token="asfsdafsa0";
 
  		return $token;
  	}
@@ -202,6 +204,7 @@ class JudgeProcess {
  		    return;
  		$data['submissionId'] = $this->submissionProcessId;
  		$c=0;
+ 		print_r($this->testCaseList);
  		foreach ($this->testCaseList as $key => $value) {
  			$c++;
  			$data['testCaseSerialNo']=$c;

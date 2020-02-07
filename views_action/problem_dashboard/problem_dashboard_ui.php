@@ -68,7 +68,6 @@
 		<div class='row'>	
 			<div class='col-md-7'>
 				<div class='box none_border'>
-				<div class='box_header'>Moderator List</div>
 				<div class='box_body'>
 		";
 		foreach ($moderatorList as $key => $value) {
@@ -77,10 +76,20 @@
 			$userId=$value['userId'];
 			$moderatorRoles=$value['moderatorRoles'];
 
-			echo "<li class='list-group-item moderators_suggestion_li' onclick='addProblemModerator()'>
-			<img class='img-thumbnail moderators_suggestion_li_img' src='$userPhoto'>
-			<b>$userHandle</b>(Owner)
-			</li>";
+			echo "<div class='row userListCard'>
+				<div class='col-md-2 col-sm-2'>
+					<img class='img-thumbnail userListImg' src='$userPhoto'>
+				</div>
+				<div class='col-md-10 col-sm-10'>
+					<div class='userListBody'>
+						<div class='pull-right'>
+							<button class='btn btn-sm btn-danger'>Delete</button>
+						</div>
+						<a href=''>$userHandle</a><br/>
+						<span class='userPermission'>Admin</span>
+					</div>
+				</div>
+			</div>";
 		}	
 
 		echo "</div></div></div>
@@ -102,7 +111,7 @@
 		$problemId=$_POST['loadTestingPage'];
 		echo "<div style='text-align: right; margin-bottom: 10px;'><button onclick='loadCreateSubmissionPage()'><span class='glyphicon glyphicon-plus'></span> Create Submission</button></div>";
 
-		echo "<table width='100%'>";
+		echo "<div class='table-responsive'><table width='100%'>";
 		echo "<tr>
 			<td class='td1'>#</td>
 			<td class='td1'>When</td>
@@ -133,7 +142,7 @@
 			<td class='td2'>$memory kb</td>
 			</tr>";
 		}
-		echo "</table>";
+		echo "</table></div>";
 	}
 
 	if(isset($_POST['loadCreateSubmissionPage'])){
@@ -144,3 +153,29 @@
 
 
 ?>
+<style type="text/css">
+	.userListCard{
+		background-color: #ffffff;
+		border: 1px solid #eeeeee;
+		padding: 10px 0px 10px 0px;
+	}
+
+	.userListImg{
+		height: 100%;
+		width: 100%;
+	}
+	.userListBody{
+	}
+	.userListBody a{
+		font-weight: bold;
+		font-size: 16px;
+	}
+
+	.userPermission{
+		font-size: 13px;
+		color: #363636;
+		font-family: serif;
+	}
+
+</style>
+								

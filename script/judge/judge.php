@@ -26,7 +26,9 @@ class Judge {
  		$serverNo3=$serverNo1+6;
  		$sql="select * from submissions natural join submissions_on_test_case where
  		(submissionId % 9 = $serverNo1 or submissionId % 9 = $serverNo2 or submissionId % 9 = $serverNo3 ) and runOnTest = testCaseSerialNo and judgeStatus = -1 and testCaseReady = 1 and judgeComplete=0";
+
  		$data=$this->DB->getData($sql);
+
  		if(isset($data[0])){
  			$this->submissionData=$data[0];
  			$this->isPending=1;
@@ -35,22 +37,27 @@ class Judge {
  	}
 
  	public function setProcessingSubmissionTestCase(){
+ 		if($this->isPending==0)
+ 			return;
  		$data=array();
  		$data['judgeStatus']=0;
  		$data['submissionTestCaseId']=$this->submissionData['submissionTestCaseId'];
- 		//$this->DB->submissionTestCaseId("submissions_on_test_case","update",$data);
+ 		$this->DB->pushData("submissions_on_test_case","update",$data);
  	}
 
  	public function resetProcessingSubmissionTestCase(){
+ 		if($this->isPending==0)
+ 			return;
  		$data=array();
  		$data['judgeStatus']=($this->isQueue==1)?-1:1;
  		$data['submissionTestCaseId']=$this->submissionData['submissionTestCaseId'];
- 		//$this->DB->submissionTestCaseId("submissions_on_test_case","update",$data);
+ 		$this->DB->pushData("submissions_on_test_case","update",$data);
  	}
 
 	public function sendCurlRequest($url){
-		$data=file_get_contents($url);
-  		return $data;
+		//$data='{"stdout":"2\n","time":"0.2","memory":1470,"stderr":null,"token":"87499552-56fd-4bb4-8bbc-cc24fa4ccc61","compile_output":null,"message":null,"status":{"id":3,"description":"WA"}}';
+		//$data=file_get_contents($url);
+  		//return $data;
 
 		$ch = curl_init();
 		curl_setopt ($ch, CURLOPT_URL, $url);
@@ -64,9 +71,9 @@ class Judge {
  	public function getApiData(){
  		if($this->isPending==0)
  			return;
- 		//$tokenId=$this->submissionData['testCaseToken'];
+ 		$tokenId=$this->submissionData['testCaseToken'];
 
- 		$tokenId="87499552-56fd-4bb4-8bbc-cc24fa4ccc61";
+ 		//$tokenId="87499552-56fd-4bb4-8bbc-cc24fa4ccc61";
  		$url="https://api.judge0.com/submissions/$tokenId";
  		$data=$this->sendCurlRequest($url);
  		$this->apiData=($data=="")?"{}":$data;
@@ -99,6 +106,8 @@ class Judge {
  		if($this->submissionData['totalTestCase']==$this->submissionData['runOnTest'] || $this->analysisData['verdict']!=3){
  			$this->saveSubmissionData['judgeComplete']=1;
  			$this->saveSubmissionData['submissionVerdict']=$this->analysisData['verdict'];
+ 			$this->saveSubmissionData['maxTimeLimit']=max($this->analysisData['time'],$this->submissionData['runOnMaxTime']);
+ 			$this->saveSubmissionData['maxMemoryLimit']=max($this->analysisData['memory'],$this->submissionData['runOnMaxMemory']);
  			
  		}
  		else{
@@ -106,13 +115,14 @@ class Judge {
  		}
 
  		$this->saveSubmissionData['submissionId']=$this->submissionData['submissionId'];
- 		$this->saveSubmissionData['maxTimeLimit']=max($this->analysisData['time'],$this->submissionData['runOnMaxTime']);
- 		$this->saveSubmissionData['maxMemoryLimit']=max($this->analysisData['memory'],$this->submissionData['maxMemoryLimit']);
+ 		$this->saveSubmissionData['runOnMaxTime']=max($this->analysisData['time'],$this->submissionData['runOnMaxTime']);
+ 		$this->saveSubmissionData['runOnMaxMemory']=max($this->analysisData['memory'],$this->submissionData['runOnMaxMemory']);
 
+ 		$this->saveSubmissionTestData['submissionTestCaseId']=$this->submissionData['submissionTestCaseId'];
  		$this->saveSubmissionTestData['verdict']=$this->analysisData['verdict'];
  		$this->saveSubmissionTestData['totalTime']=$this->analysisData['time'];
  		$this->saveSubmissionTestData['totalMemory']=$this->analysisData['memory'];
- 		$this->saveSubmissionTestData['responseData']=$this->apiData;
+ 		$this->saveSubmissionTestData['responseData']=$this->DB->buildSqlString($this->apiData);
  		$this->saveSubmissionTestData['judgeStatus']=1;
  	}
 
@@ -124,12 +134,27 @@ class Judge {
  		echo "</pre><pre>";
  		print_r($this->saveSubmissionTestData);
  		echo "</pre>";
- 		//$this->DB->pushData("submissions_on_test_case","update",$this->saveSubmissionData);
- 		//$this->DB->pushData("submissions","update",$this->saveSubmissionTestData);
+ 		$res=$this->DB->pushData("submissions_on_test_case","update",$this->saveSubmissionTestData);
+ 		$this->DB->pushData("submissions","update",$this->saveSubmissionData);
+ 		print_r($res);
+ 	}
+ 	
+ 	 public function clearData(){
+
+ 		/*******************************************************************************
+		*	@ when function is finished then our need to clear all global data
+			  for avoid previous storing.
+ 		********************************************************************************/
  		
+ 		unset($this->saveSubmissionData);
+ 		unset($this->saveSubmissionTestData);
+ 		unset($this->analysisData);
+ 		unset($this->submissionData);
  	}
 
+
  	public function judgeSubmission(){
+ 	    echo "hello\n";
  		$this->getSubmissionTestCase();
  		$this->setProcessingSubmissionTestCase();
  		$this->getApiData();
@@ -137,6 +162,19 @@ class Judge {
  		$this->processData();
  		$this->saveData();
  		$this->resetProcessingSubmissionTestCase();
+ 		$this->clearData();
+ 	}
+ 	
+ 	public function judgeMultipleSubmission($totalProcess=1){
+
+ 		$this->judgeSubmission();
+	    
+	    if($totalProcess<=50){
+	        sleep(1);
+	        $this->judgeMultipleSubmission($totalProcess+1);
+	    }
+
+	    return;
  	}
 
 

@@ -1,6 +1,14 @@
-<?php
-	include "config/config.php";
-	include "script/judge/judge.php";
-	$Judge=new Judge(0);
-	$Judge->judgeSubmission();
-?>
+<script type="text/javascript" src="style/lib/jquery/jquery.min.js"></script>
+<div id='response'></div>
+
+<script type="text/javascript">
+	setInterval(function(){ 
+		callServer();
+	}, 1000);
+
+	function callServer() {
+  		$.get("judge_server_one.php",function(response) { 
+    		$("#response").html(response);
+  		});
+	}
+</script>
